@@ -240,7 +240,7 @@ double calcularMinimo(vector<double> valores) {
 
 
    /*======================================
-      REPORTE
+                      REPORTES
     ======================================*/
 
 struct Ranking {
@@ -248,71 +248,117 @@ struct Ranking {
     double promedio;
 };
 
- void reporteEstadisticasPorCurso(){
+ void generarReporteEstadisticasCursoHTML(){
 
-     for (Curso cur:cursos){
+     ofstream archivo("reporte_cursos.html");
 
+     if (!archivo.is_open()) {
+         cout << "Error al crear el archivo HTML\n";
+         return;
+     }
+
+     archivo << "<html>"<<endl;
+     archivo << "<head>"<<endl;
+     archivo << "<title>Reporte por Curso</title>"<<endl;
+     archivo << "</head>"<<endl;
+     archivo << "<body>"<<endl;
+     archivo << "<h1>Estadisticas Generales por Curso</h1>"<<endl;
+
+     archivo << "<table border='1'>"<<endl;
+     archivo << "<tr>";
+     archivo << "<th>Curso</th>";
+     archivo << "<th>Total Estudiantes</th>";
+     archivo << "<th>Promedio</th>";
+     archivo << "<th>Mediana</th>";
+     archivo << "<th>Desviacion</th>";
+     archivo << "<th>Maximo</th>";
+     archivo << "<th>Minimo</th>";
+     archivo << "</tr>"<<endl;
+
+     for (Curso cur:cursos) {
          vector<double> notasCurso;
-         int aprobados=0;
-         int reprobados =0;
 
-         for (Nota n:notas){
-
-             if (n.codigoCurso==cur.codigo){
+         for (Nota n:notas) {
+             if (n.codigoCurso == cur.codigo) {
                  notasCurso.push_back(n.nota);
-
-                 if (n.nota>=61)
-                     aprobados++;
-                 else
-                     reprobados++;
              }
          }
+         if (!notasCurso.empty()) {
 
-         if (!notasCurso.empty()){
-
-             double promedio= calcularPromedio(notasCurso);
-             double mediana=calcularMediana(notasCurso);
-             double desviacion=calcularDesviacion(notasCurso);
-             double maximo =calcularMaximo(notasCurso);
+             double promedio = calcularPromedio(notasCurso);
+             double mediana = calcularMediana(notasCurso);
+             double desviacion = calcularDesviacion(notasCurso);
+             double maximo = calcularMaximo(notasCurso);
              double minimo = calcularMinimo(notasCurso);
-             double porcentajeAprobacion=(double)aprobados/notasCurso.size() * 100;
-                
-             cout << "\n====================================\n";
-             cout << "Curso: "<< cur.nombre << endl;
-             cout << "Promedio: "<< promedio << endl;
-             cout << "Mediana: "<< mediana << endl;
-             cout << "Desviacion: "<< desviacion << endl;
-             cout << "Nota maxima: " << maximo<< endl;
-             cout << "Nota minima: " << minimo<< endl;
-             cout << "Aprobados: "<< aprobados << endl;
-             cout << "Reprobados: "<< reprobados << endl;
-             cout << "Porcentaje aprobacion: "<<porcentajeAprobacion << "%\n";
+
+             archivo << "<tr>";
+             archivo << "<td>" << cur.nombre << "</td>";
+             archivo << "<td>" << notasCurso.size() << "</td>";
+             archivo << "<td>" << promedio << "</td>";
+             archivo << "<td>" << mediana << "</td>";
+             archivo << "<td>" << desviacion << "</td>";
+             archivo << "<td>" << maximo << "</td>";
+             archivo << "<td>" << minimo << "</td>";
+             archivo << "</tr>"<<endl;
          }
      }
+
+     archivo << "</table>"<<endl;
+     archivo << "</body>"<<endl;
+     archivo << "</html>"<<endl;
+
+     archivo.close();
+
+     cout << "Reporte HTML generado correctamente."<<endl;
  }
 
 
+ void generarReporteRendimientoEstudianteHTML() {
 
- void reporteRendimientoPorEstudiante() {
+     ofstream archivo("reporte_estudiantes.html");
 
-     for (Estudiante estu :estudiantes){
+     if (!archivo.is_open()){
+         cout <<"Error al crear el archivo HTML\n";
+         return;
+     }
+
+     archivo << "<html>\n";
+     archivo << "<head>\n";
+     archivo << "<title>Reporte Rendimiento por Estudiante</title>\n";
+     archivo << "</head>\n";
+     archivo << "<body>\n";
+
+     archivo <<"<h1>Rendimiento por Estudiante</h1>\n";
+
+     archivo << "<table border='1'>\n";
+     archivo << "<tr>";
+     archivo << "<th>Carnet</th>";
+     archivo << "<th>Nombre</th>";
+     archivo << "<th>Carrera</th>";
+     archivo << "<th>Semestre</th>";
+     archivo << "<th>Promedio</th>";
+     archivo << "<th>Aprobados</th>";
+     archivo << "<th>Reprobados</th>";
+     archivo << "<th>Creditos</th>";
+     archivo << "</tr>\n";
+
+     for (Estudiante estu:estudiantes){
 
          vector<double> notasEstudiante;
          int aprobados=0;
-         int reprobados =0;
+         int reprobados= 0;
          int creditosAcumulados= 0;
 
-         for (Nota n:notas){
+         for (Nota n:notas) {
 
-             if (n.carnet == estu.carnet){
-
+             if(n.carnet==estu.carnet) {
                  notasEstudiante.push_back(n.nota);
 
                  if (n.nota >= 61){
                      aprobados++;
-                     // Buscar el curso para sumar créditos
+
                      for (Curso cur:cursos){
-                         if (cur.codigo == n.codigoCurso) {
+                         if (cur.codigo==n.codigoCurso) {
                              creditosAcumulados += cur.creditos;
                              break;
                          }
@@ -324,22 +370,155 @@ struct Ranking {
              }
          }
 
-         if (!notasEstudiante.empty()) {
-             double promedio =calcularPromedio(notasEstudiante);
+         if (!notasEstudiante.empty()){
 
-             cout << "\n====================================\n";
-             cout << "Estudiante: " << estu.nombre << " " << estu.apellido << endl;
-             cout << "Promedio general: " << promedio << endl;
-             cout << "Cursos aprobados: " << aprobados << endl;
-             cout << "Cursos reprobados: " << reprobados << endl;
-             cout << "Creditos acumulados: " << creditosAcumulados << endl;
+             double promedio=calcularPromedio(notasEstudiante);
+
+             archivo << "<tr>";
+             archivo << "<td>"<< estu.carnet <<"</td>";
+             archivo << "<td>"<< estu.nombre <<" " << estu.apellido << "</td>";
+             archivo << "<td>"<< estu.carrera <<"</td>";
+             archivo << "<td>"<< estu.semestre <<"</td>";
+             archivo << "<td>"<< promedio <<"</td>";
+             archivo << "<td>"<< aprobados <<"</td>";
+             archivo << "<td>"<< reprobados <<"</td>";
+             archivo << "<td>" << creditosAcumulados<<"</td>";
+             archivo << "</tr>"<<endl;
          }
      }
+
+     archivo << "</table>\n";
+     archivo << "</body>\n";
+     archivo << "</html>\n";
+
+     archivo.close();
+     cout << "Reporte de estudiantes generado correctamente.\n";
  }
 
 
 
+ void generarReporteTop10HTML(){
+
+     ofstream archivo("reporte_top10.html");
+
+     if (!archivo.is_open()){
+         cout <<"Error al crear el archivo HTML\n";
+         return;
+     }
+     vector<Ranking> ranking;
+
+     for (Estudiante estu:estudiantes){
+         vector<double> notasEst;
+
+         for (Nota n:notas){
+             if (n.carnet==estu.carnet) {
+                 notasEst.push_back(n.nota);
+             }
+         }
+         if (!notasEst.empty()){
+             Ranking r;
+             r.nombreCompleto=estu.nombre + " " + estu.apellido;
+             r.promedio=calcularPromedio(notasEst);
+
+             ranking.push_back(r);
+         }
+     }
+
+     sort(ranking.begin(), ranking.end(), [](Ranking a, Ranking b){
+         return a.promedio>b.promedio;
+         });
+
+     archivo << "<html>"<<endl;
+     archivo << "<head>" <<endl;
+     archivo << "<title>Top 10 Estudiantes</title>" <<endl;
+     archivo << "</head>" <<endl;
+     archivo << "<body>" <<endl;
+     archivo << "<h1>Top 10 Mejores Estudiantes</h1>" << endl;
+
+     archivo << "<table border='1'>" << endl;
+     archivo << "<tr>";
+     archivo << "<th>Posicion</th>";
+     archivo << "<th>Nombre</th>";
+     archivo << "<th>Promedio</th>";
+     archivo << "</tr>" << endl;
+
+     for (int i=0; i<ranking.size() && i<10; i++) {
+         archivo << "<tr>";
+         archivo << "<td>" << i+1 << "</td>";
+         archivo << "<td>" << ranking[i].nombreCompleto << "</td>";
+         archivo << "<td>" << ranking[i].promedio << "</td>";
+         archivo << "</tr>" << endl;
+     }
+     archivo << "</table>" << endl;
+     archivo << "</body>" << endl;
+     archivo << "</html>" << endl;
+
+     archivo.close();
+     cout << "Reporte Top 10 generado correctamete." << endl;
+ }
+
+
+
+
+
 int main(){
+	int opcion;
+    do {
+        cout << "====================================\n";
+        cout << "   SISTEMA DE ANALISIS ACADEMICO\n";
+        cout << "====================================\n";
+        cout << "1. Cargar estudiantes" << endl;
+        cout << "2. Cargar cursos" << endl;
+        cout << "3. Cargar notas" << endl;
+        cout << "4. Reporte: Estadisticas por curso" << endl;
+        cout << "5. Reporte: Rendimiento por estudiante" << endl;
+        cout << "6. Reporte: Top 10 estudiantes" << endl;
+        cout << "7. Reporte: Cursos con mayor reprobacion" << endl;
+        cout << "8. Salir" << endl;
+        cout << "Seleccione una opcion: ";
+        cin >>opcion;
+
+        switch (opcion) {
+
+        case 1:
+            cargarEstudiantes();
+            break;
+
+        case 2:
+            cargarCursos();
+            break;
+
+        case 3:
+            cargarNotas();
+            break;
+
+        case 4:
+            generarReporteEstadisticasCursoHTML();
+            break;
+
+        case 5:
+            generarReporteRendimientoEstudianteHTML();
+            break;
+
+        case 6:
+            generarReporteTop10HTML();
+            break;
+
+        case 7:
+            reporteMayorReprobacion();
+            break;
+
+        case 8:
+            cout << "Saliendo del sistema"<<endl;
+            break;
+
+        default:
+            cout << "Opcion invalida."<<endl;
+        }
+
+    } while (opcion!= 8);
+
+
 
 
     return 0;
