@@ -7,7 +7,6 @@
 #include <cmath>
 
 using namespace std;
-
 /* ======================================
          STRUCTS (MODELOS DE DATOS)
    ======================================*/
@@ -48,7 +47,7 @@ vector<Nota> notas;
 vector<string> split(string linea) {
 
     vector<string> datos;
-    stringstream ss (linea);
+    stringstream ss(linea);
     string item;
 
     while (getline(ss, item, ',')) {
@@ -58,7 +57,7 @@ vector<string> split(string linea) {
 }
 
 /* ======================================
-             CARGAR ESTUDIANTES
+                CARGAR DATOS
    ======================================*/
 
 void cargarEstudiantes(){
@@ -66,7 +65,7 @@ void cargarEstudiantes(){
     ifstream archivo("estudiantes.lfp");
 
     if (!archivo.is_open()) {
-        cout << "Error al abrir estudiantes.lfp\n";
+        cout << "Error al abrir estudiantes.lfp" << endl;
         return;
     }
 
@@ -87,16 +86,15 @@ void cargarEstudiantes(){
         }
     }
     archivo.close();
-    cout << "Estudintes cargados correctamnte.\n";
+    cout << "Estudintes cargados correctamnte." << endl;
 }
 
 
 void cargarCursos(){
 
     ifstream archivo("cursos.lfp");
-
     if (!archivo.is_open()){
-        cout <<"Error al abrir curos.lfp\n";
+        cout <<"Error al abrir curos.lfp"<<endl;
         return;
     }
 
@@ -118,7 +116,7 @@ void cargarCursos(){
     }
 
     archivo.close();
-    cout << "Cursos cargados correctamente.\n";
+    cout << "Cursos cargados correctamente." << endl;
 }
 
 
@@ -127,7 +125,7 @@ void cargarNotas(){
     ifstream archivo("notas.lfp");
 
     if (!archivo.is_open()) {
-        cout <<"Error al abrir notas.lfp\n";
+        cout <<"Error al abrir notas.lfp" << endl;
         return;
     }
 
@@ -150,12 +148,12 @@ void cargarNotas(){
         }
     }
     archivo.close();
-    cout << "Notas cargadas correctamente.\n";
+    cout << "Notas cargadas correctamente." << endl;
 }
 
 
 /* ======================================
-		OPERACIONES ESTADISTICAS
+	    	OPERACIONES ESTADISTICAS
    ====================================== */
 
 double calcularPromedio(vector<double> valores){
@@ -200,10 +198,10 @@ double calcularDesviacion(vector<double> valores) {
     double suma=0;
 
     for (double v :valores) {
-        suma += pow(v - promedio, 2);
+        suma += pow(v -promedio, 2);
     }
 
-    return sqrt(suma / valores.size());
+    return sqrt(suma/valores.size());
 }
 
 
@@ -240,20 +238,31 @@ double calcularMinimo(vector<double> valores) {
 
 
    /*======================================
-                      REPORTES
+                    REPORTES
     ======================================*/
 
 struct Ranking {
+    int carnet;
     string nombreCompleto;
+    string carrera;
     double promedio;
+    int semestre;
+};
+
+struct Reprobacion {
+    int codigo;
+    string nombre;
+    int total;
+    int aprobados;
+    int reprobados;
+    double porcentaje;
 };
 
  void generarReporteEstadisticasCursoHTML(){
 
      ofstream archivo("reporte_cursos.html");
-
      if (!archivo.is_open()) {
-         cout << "Error al crear el archivo HTML\n";
+         cout << "Error al crear el archivo HTML" << endl;
          return;
      }
 
@@ -266,6 +275,8 @@ struct Ranking {
 
      archivo << "<table border='1'>"<<endl;
      archivo << "<tr>";
+     archivo << "<tr>";
+     archivo << "<th>Codigo</th>";
      archivo << "<th>Curso</th>";
      archivo << "<th>Total Estudiantes</th>";
      archivo << "<th>Promedio</th>";
@@ -275,15 +286,15 @@ struct Ranking {
      archivo << "<th>Minimo</th>";
      archivo << "</tr>"<<endl;
 
-     for (Curso cur:cursos) {
+     for (Curso cur:cursos){
          vector<double> notasCurso;
 
-         for (Nota n:notas) {
-             if (n.codigoCurso == cur.codigo) {
+         for (Nota n:notas){
+             if (n.codigoCurso == cur.codigo){
                  notasCurso.push_back(n.nota);
              }
          }
-         if (!notasCurso.empty()) {
+         if (!notasCurso.empty()){
 
              double promedio = calcularPromedio(notasCurso);
              double mediana = calcularMediana(notasCurso);
@@ -291,14 +302,15 @@ struct Ranking {
              double maximo = calcularMaximo(notasCurso);
              double minimo = calcularMinimo(notasCurso);
 
-             archivo << "<tr>";
-             archivo << "<td>" << cur.nombre << "</td>";
+             archivo <<"<tr>";
+             archivo <<"<td>"<< cur.codigo << "</td>";
+             archivo << "<td>"<< cur.nombre << "</td>";
              archivo << "<td>" << notasCurso.size() << "</td>";
              archivo << "<td>" << promedio << "</td>";
              archivo << "<td>" << mediana << "</td>";
-             archivo << "<td>" << desviacion << "</td>";
+             archivo << "<td>"<< desviacion << "</td>";
              archivo << "<td>" << maximo << "</td>";
-             archivo << "<td>" << minimo << "</td>";
+             archivo << "<td>"<< minimo << "</td>";
              archivo << "</tr>"<<endl;
          }
      }
@@ -309,7 +321,7 @@ struct Ranking {
 
      archivo.close();
 
-     cout << "Reporte HTML generado correctamente."<<endl;
+     cout <<"Reporte HTML generado correctamente."<<endl;
  }
 
 
@@ -318,19 +330,19 @@ struct Ranking {
      ofstream archivo("reporte_estudiantes.html");
 
      if (!archivo.is_open()){
-         cout <<"Error al crear el archivo HTML\n";
+         cout <<"Error al crear el archivo HTML" << endl;
          return;
      }
 
-     archivo << "<html>\n";
-     archivo << "<head>\n";
-     archivo << "<title>Reporte Rendimiento por Estudiante</title>\n";
-     archivo << "</head>\n";
-     archivo << "<body>\n";
+     archivo << "<html>" << endl;
+     archivo << "<head>" << endl;
+     archivo << "<title>Reporte Rendimiento por Estudiante</title>" << endl;
+     archivo << "</head>" << endl;
+     archivo << "<body>" << endl;
 
-     archivo <<"<h1>Rendimiento por Estudiante</h1>\n";
+     archivo <<"<h1>Rendimiento por Estudiante</h1>" << endl;
 
-     archivo << "<table border='1'>\n";
+     archivo << "<table border='1'>" << endl;
      archivo << "<tr>";
      archivo << "<th>Carnet</th>";
      archivo << "<th>Nombre</th>";
@@ -340,16 +352,16 @@ struct Ranking {
      archivo << "<th>Aprobados</th>";
      archivo << "<th>Reprobados</th>";
      archivo << "<th>Creditos</th>";
-     archivo << "</tr>\n";
+     archivo << "</tr>"<<endl;
 
      for (Estudiante estu:estudiantes){
 
          vector<double> notasEstudiante;
          int aprobados=0;
-         int reprobados= 0;
+         int reprobados=0;
          int creditosAcumulados= 0;
 
-         for (Nota n:notas) {
+         for (Nota n:notas){
 
              if(n.carnet==estu.carnet) {
                  notasEstudiante.push_back(n.nota);
@@ -388,8 +400,8 @@ struct Ranking {
      }
 
      archivo << "</table>\n";
-     archivo << "</body>\n";
-     archivo << "</html>\n";
+     archivo << "</body>" << endl;
+     archivo << "</html>" << endl;
 
      archivo.close();
      cout << "Reporte de estudiantes generado correctamente.\n";
@@ -400,12 +412,11 @@ struct Ranking {
  void generarReporteTop10HTML(){
 
      ofstream archivo("reporte_top10.html");
-
      if (!archivo.is_open()){
          cout <<"Error al crear el archivo HTML\n";
          return;
      }
-     vector<Ranking> ranking;
+     vector<Ranking>ranking;
 
      for (Estudiante estu:estudiantes){
          vector<double> notasEst;
@@ -417,8 +428,11 @@ struct Ranking {
          }
          if (!notasEst.empty()){
              Ranking r;
-             r.nombreCompleto=estu.nombre + " " + estu.apellido;
-             r.promedio=calcularPromedio(notasEst);
+             r.carnet=estu.carnet;
+             r.nombreCompleto = estu.nombre+ " " +estu.apellido;
+             r.carrera=estu.carrera;
+             r.semestre= estu.semestre;
+             r.promedio= calcularPromedio(notasEst);
 
              ranking.push_back(r);
          }
@@ -429,7 +443,7 @@ struct Ranking {
          });
 
      archivo << "<html>"<<endl;
-     archivo << "<head>" <<endl;
+     archivo << "<head>"<<endl;
      archivo << "<title>Top 10 Estudiantes</title>" <<endl;
      archivo << "</head>" <<endl;
      archivo << "<body>" <<endl;
@@ -438,19 +452,25 @@ struct Ranking {
      archivo << "<table border='1'>" << endl;
      archivo << "<tr>";
      archivo << "<th>Posicion</th>";
+     archivo << "<th>Carnet</th>";
      archivo << "<th>Nombre</th>";
+     archivo << "<th>Carrera</th>";
+     archivo << "<th>Semestre</th>";
      archivo << "<th>Promedio</th>";
      archivo << "</tr>" << endl;
 
-     for (int i=0; i<ranking.size() && i<10; i++) {
+     for (int i=0; i<ranking.size()&&i<10; i++) {
          archivo << "<tr>";
-         archivo << "<td>" << i+1 << "</td>";
-         archivo << "<td>" << ranking[i].nombreCompleto << "</td>";
-         archivo << "<td>" << ranking[i].promedio << "</td>";
-         archivo << "</tr>" << endl;
+         archivo <<"<td>" << i + 1 << "</td>";
+         archivo <<"<td>" << ranking[i].carnet << "</td>";
+         archivo <<"<td>" <<ranking[i].nombreCompleto << "</td>";
+         archivo <<"<td>"<< ranking[i].carrera << "</td>";
+         archivo << "<td>" << ranking[i].semestre <<"</td>";
+         archivo <<"<td>"<< ranking[i].promedio <<"</td>";
+         archivo <<"</tr>";
      }
      archivo << "</table>" << endl;
-     archivo << "</body>" << endl;
+     archivo << "</body>" <<endl;
      archivo << "</html>" << endl;
 
      archivo.close();
@@ -459,14 +479,168 @@ struct Ranking {
 
 
 
+ void generarReporteMayorReprobacionHTML() {
+
+     ofstream archivo("reporte_mayor_reprobacion.html");
+
+     if (!archivo.is_open()) {
+         cout << "Error al crear el archivo HTML" << endl;
+         return;
+     }
+
+     vector<Reprobacion> lista;
+
+     for (Curso cur :cursos) {
+         int aprobados =0;
+         int reprobados =0;
+
+         for (Nota n:notas) {
+             if (n.codigoCurso == cur.codigo) {
+                 if (n.nota >= 61)
+                     aprobados++;
+                 else
+                     reprobados++;
+             }
+         }
+
+         int total=aprobados + reprobados;
+         if (total> 0){
+
+             Reprobacion r;
+             r.codigo=cur.codigo;
+             r.nombre =cur.nombre;
+             r.total =total;
+             r.aprobados=aprobados;
+             r.reprobados= reprobados;
+             r.porcentaje=(double)reprobados / total * 100;
+             lista.push_back(r);
+         }
+     }
+     sort(lista.begin(), lista.end(), [](Reprobacion a, Reprobacion b) {
+         return a.porcentaje>b.porcentaje;
+         });
+
+     archivo << "<html>" << endl;
+     archivo << "<head>" <<endl;
+     archivo << "<title>Reporte Mayor Reprobacion</title>" << endl;
+     archivo << "</head>" <<endl;
+     archivo << "<body>" <<endl;
+     archivo << "<h1>Cursos con Mayor Reprobacion</h1>" << endl;
+
+     archivo << "<table border='1'>"<< endl;
+     archivo << "<tr>";
+     archivo << "<th>Codigo</th>";
+     archivo << "<th>Curso</th>";
+     archivo << "<th>Total</th>";
+     archivo << "<th>Aprobados</th>";
+     archivo << "<th>Reprobados</th>";
+     archivo << "<th>% Reprobacion</th>";
+     archivo << "</tr>" << endl;
+
+     for (Reprobacion repro:lista){
+         archivo << "<tr>";
+         archivo << "<td>" << repro.codigo << "</td>";
+         archivo << "<td>" << repro.nombre << "</td>";
+         archivo << "<td>" << repro.total << "</td>";
+         archivo << "<td>" << repro.aprobados << "</td>";
+         archivo << "<td>" << repro.reprobados << "</td>";
+         archivo << "<td>" << repro.porcentaje << "</td>";
+         archivo << "</tr>" << endl;
+     }
+
+     archivo << "</table>" << endl;
+     archivo << "</body>" << endl;
+     archivo << "</html>" << endl;
+     archivo.close();
+     cout << "Reporte de mayor reprobacion generado correctamente.\n";
+ }
+
+
+
+ void generarReporteAnalisisCarreraHTML(){
+
+     ofstream archivo("reporte_analisis_carrera.html");
+
+     if (!archivo.is_open()){
+         cout <<"Error al crear el archivo HTML\n";
+         return;
+     }
+     archivo << "<html>" << endl;
+     archivo << "<head>" << endl;
+     archivo << "<title>Analisis por Carrera</title>" << endl;
+     archivo << "</head>" << endl;
+     archivo << "<body>" << endl;
+     archivo << "<h1>Analisis por Carrera</h1>" << endl;
+
+     archivo << "<table border='1'>" << endl;
+     archivo << "<tr>";
+     archivo << "<th>Carrera</th>";
+     archivo << "<th>Total Estudiantes</th>";
+     archivo << "<th>Promedio General</th>";
+     archivo << "<th>Total Aprobados</th>";
+     archivo << "<th>Total Reprobados</th>";
+     archivo << "</tr>" << endl;
+
+     for (Estudiante estu:estudiantes){
+         string carreraActual=estu.carrera;
+
+         int totalEstudiantes=0;
+         int totalAprobados=0;
+         int totalReprobados=0;
+         vector<double> todasLasNotas;
+
+         for (Estudiante e: estudiantes){
+
+             if (e.carrera==carreraActual){
+                 totalEstudiantes++;
+
+                 for (Nota n:notas){
+                     if (n.carnet==e.carnet){
+                         todasLasNotas.push_back(n.nota);
+
+                         if (n.nota>=61)
+                             totalAprobados++;
+                         else
+                             totalReprobados++;
+                     }
+                 }
+             }
+         }
+
+         if (totalEstudiantes >0) {
+
+             double promedioGeneral=calcularPromedio(todasLasNotas);
+             archivo << "<tr>";
+             archivo << "<td>"<< carreraActual << "</td>";
+             archivo << "<td>"<< totalEstudiantes << "</td>";
+             archivo << "<td>"<<promedioGeneral << "</td>";
+             archivo << "<td>"<< totalAprobados << "</td>";
+             archivo << "<td>" << totalReprobados << "</td>";
+             archivo << "</tr>" << endl;
+         }
+
+         for (Estudiante& e : estudiantes){
+             if (e.carrera ==carreraActual) {
+                 e.carrera="";
+             }
+         }
+     }
+     archivo << "</table>" << endl;
+     archivo << "</body>" << endl;
+     archivo << "</html>" << endl;
+
+     archivo.close();
+     cout << "Reporte de analsis por carrera generado correctmente." << endl;
+ }
+
 
 
 int main(){
 	int opcion;
     do {
-        cout << "====================================\n";
-        cout << "   SISTEMA DE ANALISIS ACADEMICO\n";
-        cout << "====================================\n";
+        cout << "====================================" << endl;
+        cout << "   SISTEMA DE ANALISIS ACADEMICO" << endl;
+        cout << "====================================" << endl;
         cout << "1. Cargar estudiantes" << endl;
         cout << "2. Cargar cursos" << endl;
         cout << "3. Cargar notas" << endl;
@@ -505,21 +679,22 @@ int main(){
             break;
 
         case 7:
-            reporteMayorReprobacion();
+            generarReporteMayorReprobacionHTML();
             break;
 
         case 8:
-            cout << "Saliendo del sistema"<<endl;
+            generarReporteAnalisisCarreraHTML();
             break;
 
+        case 9:
+            cout << "Saliendo del program."<<endl;
+			break;
+
         default:
-            cout << "Opcion invalida."<<endl;
+		    cout << "Opcion no valida. Intente de nuevo." << endl;
         }
 
-    } while (opcion!= 8);
-
-
-
+    } while (opcion!= 9);
 
     return 0;
 }

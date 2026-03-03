@@ -21,8 +21,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="estudiantes.lfp" />
-    <None Include="notas.lfp" />
     <None Include="cursos.lfp" />
-    <None Include="reporte_cursos.html" />
+    <None Include="notas.lfp" />
   </ItemGroup>
 </Project>
